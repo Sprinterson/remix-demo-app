@@ -1,5 +1,5 @@
 import { redirect } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { Link, useLoaderData } from '@remix-run/react';
 
 import NewNote, { links as newNoteLinks } from '~/components/NewNote';
 import NoteList, { links as noteListLinks } from '~/components/NoteList';
@@ -26,7 +26,7 @@ export async function action({ request }) {
   const noteData = Object.fromEntries(formData);
 
   if (noteData.title.trim().length < 5) {
-    return {message: 'Invalide title - must be at least 5 characters long.'};
+    return { message: 'Invalide title - must be at least 5 characters long.' };
   }
 
   const existingNotes = await getStoredNotes();
@@ -38,4 +38,14 @@ export async function action({ request }) {
 
 export function links() {
   return [...newNoteLinks(), ...noteListLinks()];
+}
+
+export function ErrorBoundary({ error }) {
+  return (
+    <main className='error'>
+      <h1>An error related to your notes occured!</h1>
+      <p>{error.message}</p>
+      <p>Back to <Link to='/'>safety</Link></p>
+    </main>
+  );
 }
